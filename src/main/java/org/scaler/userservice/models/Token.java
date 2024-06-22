@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class Token extends BaseModel{
     private Date expiry;
-    private boolean is_Valid;
+    private boolean isValid;
     private String value;
 
     @ManyToOne

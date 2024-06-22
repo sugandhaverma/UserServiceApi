@@ -1,6 +1,7 @@
 package org.scaler.userservice.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.scaler.userservice.dtos.UserDto;
 import org.scaler.userservice.models.Token;
 import org.scaler.userservice.models.User;
 import org.scaler.userservice.repository.TokenRepo;
@@ -66,7 +67,7 @@ public class UserService {
         Token token = new Token();
         token.setExpiry(expiry);
         token.setUser(u);
-        token.set_Valid(true);
+        token.setValid(true);
 
         token.setValue(RandomStringUtils.randomAlphanumeric(128));
         return token;
@@ -79,8 +80,20 @@ public class UserService {
             return;
         }
         Token t = optionalToken.get();
-        t.set_Valid(false);
+        t.setValid(false);
         tokenRepo.save(t);
+    }
+
+    public User validateToken(String token) {
+        Optional<Token> optionalToken = tokenRepo.findByValueAndIsValidAndExpiryGreaterThan(token, true, new Date());
+
+        if (optionalToken.isEmpty()) {
+            throw  new RuntimeException("Token not found");
+           // return null;
+        }
+
+        User u =  optionalToken.get().getUser();
+      return  u;
     }
 
 }
